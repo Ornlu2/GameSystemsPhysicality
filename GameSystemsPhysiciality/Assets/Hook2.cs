@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class Hook : MonoBehaviour
+public class Hook2 : MonoBehaviour
 {
 
     public Transform cam;
@@ -28,7 +27,7 @@ public class Hook : MonoBehaviour
         rb = GetComponentInParent<Rigidbody>();
         camera = Camera.main.GetComponent<CameraMouseRotation>();
         Pmovement = GameObject.Find("Player").GetComponent<PlayerMovement>();
-        Reticle = GameObject.Find("ReticleHook1");
+        Reticle = GameObject.Find("ReticleHook2");
 
         rope = GetComponent<LineRenderer>();
 
@@ -55,17 +54,17 @@ public class Hook : MonoBehaviour
             Reticle.SetActive(false);
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(1))
         {
 
             if (Physics.Raycast(cam.position, cam.forward, out hit))
             {
-                Hitpoint = hit.point;
+               Hitpoint= hit.point ;
                 Reticle.SetActive(true);
                 anchorSet = true;
             }
         }
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(1))
         {
             anchorSet = false;
             attached = false;
@@ -75,7 +74,7 @@ public class Hook : MonoBehaviour
 
         if (anchorSet)
         {
-            float distance = Vector3.Distance(GameObject.Find(name: "GrapplingHook1Anchor").transform.position, Hitpoint);
+            float distance = Vector3.Distance(GameObject.Find(name: "GrapplingHook2Anchor").transform.position, Hitpoint);
             rb.isKinematic = true;
 
             Debug.Log(Hitpoint);
@@ -99,7 +98,7 @@ public class Hook : MonoBehaviour
         if (attached)
         {
             //Debug.Log(hit.transform.position);
-            float distance = Vector3.Distance(rb.transform.position, GameObject.Find(name: "GrapplingHook1Anchor").transform.position);
+            float distance = Vector3.Distance(rb.transform.position, GameObject.Find(name: "GrapplingHook2Anchor").transform.position);
             Reticle.SetActive(false);
             camera.xSpeed = 0;
             camera.ySpeed = 0;
@@ -107,21 +106,21 @@ public class Hook : MonoBehaviour
             Pmovement.CanMove = false;
             //Debug.Log(distance);
 
+            momentum += Time.deltaTime * speed;
             step = momentum * Time.deltaTime;
 
 
 
             if (distance > 1 && hitCollisionPoint == false)
             {
+                rb.transform.position = Vector3.MoveTowards(rb.transform.position, GameObject.Find(name: "GrapplingHook2Anchor").transform.position, step);
                 momentum += Time.deltaTime * speed;
-
-                rb.transform.position = Vector3.MoveTowards(rb.transform.position, GameObject.Find(name: "GrapplingHook1Anchor").transform.position, step);
 
             }
             else if (distance < 1)
             {
-                momentum = 0;
                 hitCollisionPoint = true;
+                momentum = 0;
             }
             if (attached && hitCollisionPoint == true)
             {
