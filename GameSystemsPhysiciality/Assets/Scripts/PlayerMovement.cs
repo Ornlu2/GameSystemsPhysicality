@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     Vector3 moveDirection;
 
     Rigidbody rb;
+    public bool CanMove = true;
 
     void Awake()
     {
@@ -20,7 +21,10 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        Move();
+        if (CanMove == true)
+        {
+            Move();
+        }
     }
 
     void Move()
