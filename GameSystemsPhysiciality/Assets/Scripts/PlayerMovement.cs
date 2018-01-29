@@ -5,34 +5,86 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 
-    float moveSpeed = 6f;            // Player's speed when walking.
-    float rotationSpeed = 6f;
-    float jumpHeight = 10f;         // How high Player jumps
-
-    Vector3 moveDirection;
+    public float moveSpeed  ;            // Player's speed when walking.
+    public float rotationSpeed ;
+    public float jumpHeight;        // How high Player jumps
+    RaycastHit hit;
 
     Rigidbody rb;
     public bool CanMove = true;
+    public bool grounded = true;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
 
+
+    private void Update()
+    {
+        Physics.Raycast(rb.position, -transform.up, out hit);
+
+    }
+
     void FixedUpdate()
     {
         if (CanMove == true)
         {
-            Move();
+            if(grounded)
+            {
+                Move();
+                jump();
+
+            }
+           
+        }
+        //Debug.Log(hit.distance);
+
+        if (hit.distance <1.5)
+        {
+            grounded = true;
+            Debug.Log("grounded");
         }
     }
 
     void Move()
     {
-        float hAxis = Input.GetAxis("Horizontal");
-        float vAxis = Input.GetAxis("Vertical");
 
-        Vector3 movement = new Vector3(hAxis, 0f, vAxis);
-        rb.position += movement * moveSpeed * Time.deltaTime;
+
+        var translationVertical = Input.GetAxis("Vertical");
+        translationVertical = translationVertical * moveSpeed;
+        translationVertical *= Time.deltaTime;
+
+        var translationHorizontal = Input.GetAxis("Horizontal");
+        translationHorizontal = translationHorizontal * moveSpeed;
+        translationHorizontal *= Time.deltaTime;
+
+        var cameraRelative = Camera.main.transform.TransformDirection(0, 0, -1);
+        rb.position -= new Vector3((cameraRelative.x * translationVertical), 0, (cameraRelative.z * translationVertical));
+        cameraRelative = Camera.main.transform.TransformDirection(-1, 0, 0);
+
+        rb.position -= new  Vector3((cameraRelative.x * translationHorizontal), 0, (cameraRelative.z * translationHorizontal));
     }
+    void jump()
+    {
+        if ( hit.distance <= 1.1f  && Input.GetKeyUp(KeyCode.Space) == true)
+        {
+            if (hit.transform.gameObject.tag == "Ground")
+            {
+                grounded = false;
+                rb.AddForce(0, jumpHeight, 0);
+                Debug.Log("jumping");
+            }
+            else if (hit.transform.gameObject.tag =="Platform")
+            {
+                grounded = false;
+                rb.AddForce(0, jumpHeight, 0);
+                Debug.Log("jumping");
+            }
+          
+        }
+        
+
+    }
+    
 }

@@ -25,6 +25,7 @@ public class Hook2 : MonoBehaviour
     void Start()
     {
         rb = GetComponentInParent<Rigidbody>();
+        
         camera = Camera.main.GetComponent<CameraMouseRotation>();
         Pmovement = GameObject.Find("Player").GetComponent<PlayerMovement>();
         Reticle = GameObject.Find("ReticleHook2");
@@ -79,7 +80,7 @@ public class Hook2 : MonoBehaviour
 
             Debug.Log(Hitpoint);
             GrappleHookPoint.transform.position = Vector3.MoveTowards(GrappleHookPoint.transform.position, Hitpoint, 1f);
-            Debug.Log(distance);
+            //Debug.Log(distance);
             if (distance <= 0.25)
             {
                 attached = true;
@@ -104,15 +105,16 @@ public class Hook2 : MonoBehaviour
             camera.ySpeed = 0;
 
             Pmovement.CanMove = false;
+            //Pmovement.grounded = false;
             //Debug.Log(distance);
 
-            momentum += Time.deltaTime * speed;
             step = momentum * Time.deltaTime;
 
 
 
             if (distance > 1 && hitCollisionPoint == false)
             {
+
                 rb.transform.position = Vector3.MoveTowards(rb.transform.position, GameObject.Find(name: "GrapplingHook2Anchor").transform.position, step);
                 momentum += Time.deltaTime * speed;
 
@@ -126,14 +128,39 @@ public class Hook2 : MonoBehaviour
             {
                 camera.xSpeed = 250f;
                 camera.ySpeed = 140f;
+
+                Pmovement.grounded = false;
+
+
+
             }
 
-
+            
 
 
             if (Input.GetAxis("Mouse ScrollWheel") < 0 && hitCollisionPoint == true)
             {
-                rb.position = new Vector3(rb.position.x, rb.position.y - 0.25f, rb.position.z);
+                Physics.Raycast(rb.position, -transform.up, out hit);
+
+                if (hit.distance<2)
+                {
+                    Debug.Log("hit ground");
+                    anchorSet = false;
+                    attached = false;
+                    hitCollisionPoint = false;
+                    rb.isKinematic = false;
+                }
+                
+                
+                 rb.position = new Vector3(rb.position.x, rb.position.y - 1f, rb.position.z);
+
+                
+            }
+            if (Input.GetAxis("Mouse ScrollWheel")  >0 && rb.position.y < Hitpoint.y-1f && hitCollisionPoint == true)
+            {
+              
+                    rb.position = new Vector3(rb.position.x, rb.position.y + 0.25f, rb.position.z);
+                
             }
 
         }
