@@ -34,11 +34,11 @@ public class Hook : MonoBehaviour
 
         Reticle.SetActive(false);
         Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+       
     }
     void Update()
     {
-
+        Cursor.lockState = CursorLockMode.Locked;
         GrapplingHook();
 
     }
@@ -46,7 +46,7 @@ public class Hook : MonoBehaviour
     void GrapplingHook()
     {
 
-        if (Physics.Raycast(cam.position, cam.forward, out hit))
+        if (Physics.Raycast(cam.position, cam.forward, out hit,50f))
         {
             Reticle.SetActive(true);
         }
@@ -58,11 +58,15 @@ public class Hook : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
 
-            if (Physics.Raycast(cam.position, cam.forward, out hit))
+            if (Physics.Raycast(cam.position, cam.forward, out hit,50f))
             {
-                Hitpoint = hit.point;
-                Reticle.SetActive(true);
-                anchorSet = true;
+               if( hit.collider.gameObject.tag != "Ground")
+                {
+                    Hitpoint = hit.point;
+                    Reticle.SetActive(true);
+                    anchorSet = true;
+                }
+               
             }
         }
         if (Input.GetMouseButtonUp(0))
@@ -79,7 +83,7 @@ public class Hook : MonoBehaviour
             rb.isKinematic = true;
 
             Debug.Log(Hitpoint);
-            GrappleHookPoint.transform.position = Vector3.MoveTowards(GrappleHookPoint.transform.position, Hitpoint, 1f);
+            GrappleHookPoint.transform.position = Vector3.MoveTowards(GrappleHookPoint.transform.position, Hitpoint, 10f);
             //Debug.Log(distance);
             if (distance <= 0.25)
             {

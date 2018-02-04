@@ -71,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (hit.transform.gameObject.tag == "Ground")
             {
-                grounded = false;
+                grounded = true;
                 rb.AddForce(0, jumpHeight, 0);
                 Debug.Log("jumping");
             }
